@@ -1,4 +1,5 @@
 import logging
+import asyncio
 from telegram import Bot
 
 
@@ -8,13 +9,13 @@ class Telegram(logging.StreamHandler):
         logging.StreamHandler.__init__(self)
         self.bot = Bot(token=self.token)
 
-    def send_message(self, message):
-        self.bot.sendMessage(chat_id=self.chat_id, text=message)
+    async def send_message(self, message):
+        await self.bot.sendMessage(chat_id=self.chat_id, text=message)
 
     def emit(self, record):
         try:
             message = self.format(record)
-            self.send_message(message)
+            asyncio.run(self.send_message(message))
             stream = self.stream
             # issue 35046: merged two stream.writes into one.
             self.flush()
